@@ -1,6 +1,7 @@
 package com.example.sistema_venda
 
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.print.PrintAttributes.Margins
 import android.util.Log
@@ -32,16 +33,25 @@ class `codigo_tela_venda` : AppCompatActivity(){
         // Referencia o layout com o id especificado
         val layout = findViewById<LinearLayout>(R.id.itensVenda)
 
-        for (i in 1..5){
+        for (i in 1..25){
             val novoItem = LinearLayout(this).apply {
-                setBackgroundColor(Color.LTGRAY)
+                background = GradientDrawable().apply {
+                    setColor(Color.LTGRAY) // Cor de fundo
+                    cornerRadius = 10 * resources.displayMetrics.density // Define o radius (16dp)
+                }
                 orientation = LinearLayout.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     (60 * resources.displayMetrics.density).toInt()
-                )
+                ).apply {
+                    setMargins(
+                        (0 * resources.displayMetrics.density).toInt(),
+                        (0 * resources.displayMetrics.density).toInt(),
+                        (0 * resources.displayMetrics.density).toInt(),
+                        (5 * resources.displayMetrics.density).toInt()
+                    )
+                }
                 id = View.generateViewId()
-                Margins(0, 10, 0, 0)
             }
 
             val nomeProduto = TextView(this).apply {
@@ -91,7 +101,7 @@ class `codigo_tela_venda` : AppCompatActivity(){
             novoItem.addView(quantidadeProduto)
             novoItem.addView(botaoMais)
 
-            findViewById<LinearLayout>(R.id.itensVenda).addView(novoItem)
+            layout.addView(novoItem)
         }
     }
 
