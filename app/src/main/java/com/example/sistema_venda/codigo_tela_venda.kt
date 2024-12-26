@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.print.PrintAttributes.Margins
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.LinearLayout
@@ -22,7 +23,8 @@ class `codigo_tela_venda` : AppCompatActivity(){
     fun alterar_valor(layoutIdRecebido: Int, quantidadeRecebida: Int){
         val layoutAtual = findViewById<LinearLayout>(layoutIdRecebido)
 
-        val textoAtual = layoutAtual.getChildAt(3) as TextView
+        val layoutInterno = layoutAtual.getChildAt(1) as LinearLayout
+        val textoAtual = layoutInterno.getChildAt(2) as TextView
         val novaQuantidade = textoAtual.text.toString().toInt() + quantidadeRecebida
         if(novaQuantidade >= 0) {
             textoAtual.text = novaQuantidade.toString()
@@ -40,6 +42,7 @@ class `codigo_tela_venda` : AppCompatActivity(){
                     cornerRadius = 10 * resources.displayMetrics.density // Define o radius (16dp)
                 }
                 orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     (60 * resources.displayMetrics.density).toInt()
@@ -59,6 +62,16 @@ class `codigo_tela_venda` : AppCompatActivity(){
                 textSize = 16f
                 setTextColor(Color.BLACK)
                 textAlignment = View.TEXT_ALIGNMENT_CENTER
+
+            }
+
+            val layoutInterno = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+                )
+                gravity = Gravity.END
             }
 
             val quantidadeEstoque = TextView(this).apply {
@@ -95,11 +108,13 @@ class `codigo_tela_venda` : AppCompatActivity(){
                 setBackgroundColor(Color.TRANSPARENT)
             }
 
+            layoutInterno.addView(quantidadeEstoque)
+            layoutInterno.addView(botaoMenos)
+            layoutInterno.addView(quantidadeProduto)
+            layoutInterno.addView(botaoMais)
+
             novoItem.addView(nomeProduto)
-            novoItem.addView(quantidadeEstoque)
-            novoItem.addView(botaoMenos)
-            novoItem.addView(quantidadeProduto)
-            novoItem.addView(botaoMais)
+            novoItem.addView(layoutInterno)
 
             layout.addView(novoItem)
         }
