@@ -17,11 +17,6 @@ import com.example.sistema_venda.SqlLite.DataBase
 
 class `codigo_tela_venda` : AppCompatActivity(){
 
-    fun funcao_sair(view: View) {
-        val botao = view as Button
-        botao.text = "novo texto"
-    }
-
     fun alterar_valor(layoutIdRecebido: Int, quantidadeRecebida: Int){
         val layoutAtual = findViewById<LinearLayout>(layoutIdRecebido) ?: return
 
@@ -33,7 +28,33 @@ class `codigo_tela_venda` : AppCompatActivity(){
         }
     }
 
-    fun criar_itens_venda(){
+    fun busca_BD(caixa: Int){
+        val DBHelper = DataBase(this)
+        val db = DBHelper.writableDatabase
+        try {
+            // Comando que gera retorno
+            val retornoBD = db.rawQuery("SELECT (nome, preco, quantidade, combo, itens) " +
+                    "FROM produtos " +
+                    "WHERE emUso = 1 and (quantidade > 0 or inerente = 1) " +
+                    "and (caixa LIKE '${caixa},%' or caixa LIKE '%,${caixa},%') " +
+                    "ORDER BY posicao", null)
+
+            if(retornoBD.moveToFirst()){
+                do{
+                    val nome = retornoBD.getString(retornoBD.getColumnIndexOrThrow("nome"))
+                    val preco = retornoBD.getDouble(retornoBD.getColumnIndexOrThrow("preco"))
+                    val quantidade = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("quantidade"))
+                    val combo = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("combo"))
+                    val itens = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("itens"))
+                } while (retornoBD.moveToNext())
+            }
+        } catch (e: Exception){
+            println("O erro foi ${e.message}")
+            Toast.makeText(this, "Ocorreu um erro, tente novamente!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun criar_itens_venda(nomeRecebido: String, precoRecebido: Double, quantidadeRecebida: Int){
         // Referencia o layout com o id especificado
         val layout = findViewById<LinearLayout>(R.id.itensVenda)
 
@@ -41,7 +62,7 @@ class `codigo_tela_venda` : AppCompatActivity(){
             val novoItem = LinearLayout(this).apply {
                 background = GradientDrawable().apply {
                     setColor(Color.LTGRAY) // Cor de fundo
-                    cornerRadius = 10 * resources.displayMetrics.density // Define o radius (16dp)
+                    cornerRadius = 10 * resources.displayMetrics.density // Define o radius
                 }
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
@@ -151,31 +172,21 @@ class `codigo_tela_venda` : AppCompatActivity(){
         }
     }
 
+    fun funcao_sair(view: View) {
+        val botao = view as Button
+        botao.text = "novo texto"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Faz o link com o arquivo xml da tela de venda
         setContentView(R.layout.tela_venda)
         // Tira a bara no topo do app
         supportActionBar?.hide()
+
+        busca_BD(1)
+
         // Chama a funcao q ira criar a lista de vendas
-
-        val DBHelper = DataBase(this)
-        val db = DBHelper.writableDatabase
-
-        try {
-            db.execSQL("insert into produtos (nome, preco, quantidade, inerente, emUso, posicao, combo, itens) values ('teste', 5.20, 5, 0, 1, 1, 0, '')")
-            val retornoBD = db.execSQL("SELECT (id, nome, preco, quantidade, combo, itens, caixas) " +
-                    "FROM produtos " +
-                    "WHERE emUso = 1 and (quantidade > 0 or inerente = 1) " +
-                    "ORDER BY posicao")
-
-            println("O retorno foi ${retornoBD.toString()}")
-        } catch (e: Exception){
-            println("O erro foi ${e.message}")
-        }
-
-
-
         criar_itens_venda()
     }
 }
