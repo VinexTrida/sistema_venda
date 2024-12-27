@@ -1,11 +1,9 @@
 package com.example.sistema_venda
 
+import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.print.PrintAttributes.Margins
-import android.util.Log
-import android.util.LogPrinter
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +11,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Button
 import android.widget.Toast
-import com.example.sistema_venda.SqlLite.DataBase
+import androidx.core.animation.addListener
+import com.example.sistema_venda.SqlLite.data_base
 
 class `codigo_tela_venda` : AppCompatActivity(){
 
@@ -29,11 +28,16 @@ class `codigo_tela_venda` : AppCompatActivity(){
     }
 
     fun busca_BD(caixa: Int){
-        val DBHelper = DataBase(this)
+        val DBHelper = data_base(this)
         val db = DBHelper.writableDatabase
+
+        var nome = ""
+        var preco = 0.00
+        var quantidade = 0
+        var combo = 0
         try {
             // Comando que gera retorno
-            val retornoBD = db.rawQuery("SELECT (nome, preco, quantidade, combo, itens) " +
+            val retornoBD = db.rawQuery("SELECT (nome, preco, quantidade, combo) " +
                     "FROM produtos " +
                     "WHERE emUso = 1 and (quantidade > 0 or inerente = 1) " +
                     "and (caixa LIKE '${caixa},%' or caixa LIKE '%,${caixa},%') " +
@@ -41,17 +45,19 @@ class `codigo_tela_venda` : AppCompatActivity(){
 
             if(retornoBD.moveToFirst()){
                 do{
-                    val nome = retornoBD.getString(retornoBD.getColumnIndexOrThrow("nome"))
-                    val preco = retornoBD.getDouble(retornoBD.getColumnIndexOrThrow("preco"))
-                    val quantidade = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("quantidade"))
-                    val combo = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("combo"))
-                    val itens = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("itens"))
+                    nome = retornoBD.getString(retornoBD.getColumnIndexOrThrow("nome"))
+                    preco = retornoBD.getDouble(retornoBD.getColumnIndexOrThrow("preco"))
+                    quantidade = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("quantidade"))
+                    combo = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("combo"))
                 } while (retornoBD.moveToNext())
             }
         } catch (e: Exception){
             println("O erro foi ${e.message}")
             Toast.makeText(this, "Ocorreu um erro, tente novamente!", Toast.LENGTH_LONG).show()
         }
+
+        // Chama a funcao q ira criar a lista de vendas
+        criar_itens_venda(nome, preco, quantidade)
     }
 
     fun criar_itens_venda(nomeRecebido: String, precoRecebido: Double, quantidadeRecebida: Int){
@@ -172,6 +178,30 @@ class `codigo_tela_venda` : AppCompatActivity(){
         }
     }
 
+    fun funcao_configuracoes(view: View){
+        val menuLateral = findViewById<LinearLayout>(R.id.menuLateral)
+        val overlay = findViewById<View>(R.id.overlay)
+
+        if (menuLateral.visibility == View.VISIBLE) {
+            // Fechar com animação
+            ObjectAnimator.ofFloat(menuLateral, "translationX", 0f, -menuLateral.width.toFloat()).apply {
+                duration = 300
+                start()
+            }.addListener(onEnd = {
+                menuLateral.visibility = View.GONE
+                overlay.visibility = View.GONE
+            })
+        } else {
+            // Abrir com animação
+            menuLateral.visibility = View.VISIBLE
+            overlay.visibility = View.VISIBLE
+            ObjectAnimator.ofFloat(menuLateral, "translationX", -menuLateral.width.toFloat(), 0f).apply {
+                duration = 300
+                start()
+            }
+        }
+    }
+
     fun funcao_sair(view: View) {
         val botao = view as Button
         botao.text = "novo texto"
@@ -185,8 +215,5 @@ class `codigo_tela_venda` : AppCompatActivity(){
         supportActionBar?.hide()
 
         busca_BD(1)
-
-        // Chama a funcao q ira criar a lista de vendas
-        criar_itens_venda()
     }
 }
