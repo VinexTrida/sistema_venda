@@ -77,7 +77,8 @@
             android:paddingStart="5dp"
             android:paddingTop="5dp"
             android:paddingEnd="5dp"
-            android:paddingBottom="5dp">
+            android:paddingBottom="0dp"
+            android:background="@color/black">
         </LinearLayout>
     </ScrollView>
 
@@ -143,8 +144,10 @@
         <Button
             android:id="@+id/item1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:padding="5dp"
             android:text="Produtos"
+            app:cornerRadius="0dp"
             android:textColor="#FFF" />
 
         <Button

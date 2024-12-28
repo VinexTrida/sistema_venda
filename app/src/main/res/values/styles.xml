@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Estilo personalizado para os botões do menu lateral -->
+    <style name="NavigationViewStyle" parent="Widget.MaterialComponents.NavigationView">
+        <item name="android:itemPadding">5dp</item>
+    </style>
+</resources>
