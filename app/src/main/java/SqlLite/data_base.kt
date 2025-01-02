@@ -1,4 +1,4 @@
-package com.example.sistema_venda.SqlLite
+package SqlLite
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

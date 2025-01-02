@@ -12,7 +12,7 @@ import android.widget.TextView
 import android.widget.Button
 import android.widget.Toast
 import androidx.core.animation.addListener
-import com.example.sistema_venda.SqlLite.data_base
+import SqlLite.data_base
 
 class `codigo_tela_venda` : AppCompatActivity(){
 
