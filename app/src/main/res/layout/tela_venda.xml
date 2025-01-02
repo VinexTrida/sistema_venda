@@ -157,7 +157,7 @@
         android:layout_width="280dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:background="#333333"
+        android:background="@color/azul_claro"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -167,25 +167,31 @@
         <Button
             android:id="@+id/item1"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:padding="5dp"
             android:text="Produtos"
             app:cornerRadius="0dp"
-            android:textColor="#FFF" />
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"/>
 
         <Button
             android:id="@+id/item2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Usuarios"
-            android:textColor="#FFF" />
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"/>
 
         <Button
             android:id="@+id/item3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Relatórios"
-            android:textColor="#FFF" />
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
