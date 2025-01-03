@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.animation.addListener
 import SqlLite.data_base
+import android.database.Cursor
 
 class `codigo_tela_venda` : AppCompatActivity(){
 
@@ -35,9 +36,11 @@ class `codigo_tela_venda` : AppCompatActivity(){
         var preco = 0.00
         var quantidade = 0
         var combo = 0
+
+        var retornoBD: Cursor? = null
         try {
             // Comando que gera retorno
-            val retornoBD = db.rawQuery("SELECT (nome, preco, quantidade, combo) " +
+            retornoBD = db.rawQuery("SELECT (nome, preco, quantidade, combo) " +
                     "FROM produtos " +
                     "WHERE emUso = 1 and (quantidade > 0 or inerente = 1) " +
                     "and (caixa LIKE '${caixa},%' or caixa LIKE '%,${caixa},%') " +
@@ -54,6 +57,8 @@ class `codigo_tela_venda` : AppCompatActivity(){
         } catch (e: Exception){
             println("O erro foi ${e.message}")
             Toast.makeText(this, "Ocorreu um erro, tente novamente!", Toast.LENGTH_LONG).show()
+        } finally {
+            retornoBD?.close()
         }
 
         // Chama a funcao q ira criar a lista de vendas
@@ -202,9 +207,17 @@ class `codigo_tela_venda` : AppCompatActivity(){
         }
     }
 
+    fun funcao_reimprimir(view: View){
+
+    }
+
     fun funcao_sair(view: View) {
         val botao = view as Button
         botao.text = "novo texto"
+    }
+
+    fun funcao_subtotal(view: View){
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
