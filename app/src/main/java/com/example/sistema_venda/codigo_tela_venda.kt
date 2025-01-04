@@ -13,9 +13,10 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.animation.addListener
 import SqlLite.data_base
+import android.content.Intent
 import android.database.Cursor
 
-class `codigo_tela_venda` : AppCompatActivity(){
+class codigo_tela_venda : AppCompatActivity(){
 
     fun alterar_valor(layoutIdRecebido: Int, quantidadeRecebida: Int){
         val layoutAtual = findViewById<LinearLayout>(layoutIdRecebido) ?: return
@@ -205,6 +206,13 @@ class `codigo_tela_venda` : AppCompatActivity(){
                 start()
             }
         }
+    }
+
+    fun funcao_produtos(view: View){
+        val intentProdutos = Intent(this, codigo_tela_produto::class.java)
+        // Fecha o menu lateral pra quando o usuario voltar
+        funcao_configuracoes(findViewById<View>(R.id.botaoConfiguracoes))
+        startActivity(intentProdutos)
     }
 
     fun funcao_reimprimir(view: View){
