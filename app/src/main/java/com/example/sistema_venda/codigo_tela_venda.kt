@@ -69,7 +69,9 @@ class codigo_tela_venda : AppCompatActivity(){
     fun criar_itens_venda(nomeRecebido: String, precoRecebido: Double, quantidadeRecebida: Int){
         // Referencia o layout com o id especificado
         val layout = findViewById<LinearLayout>(R.id.itensVenda)
+        val textoErro = findViewById<TextView>(R.id.texto_erro)
 
+        layout.removeView(textoErro)
         for (i in 1..25){
             val novoItem = LinearLayout(this).apply {
                 background = GradientDrawable().apply {
@@ -188,6 +190,7 @@ class codigo_tela_venda : AppCompatActivity(){
         val menuLateral = findViewById<LinearLayout>(R.id.menuLateral)
         val overlay = findViewById<View>(R.id.overlay)
 
+        // Verifica se o menu lateral está visível
         if (menuLateral.visibility == View.VISIBLE) {
             // Fechar com animação
             ObjectAnimator.ofFloat(menuLateral, "translationX", 0f, -menuLateral.width.toFloat()).apply {
@@ -198,12 +201,17 @@ class codigo_tela_venda : AppCompatActivity(){
                 overlay.visibility = View.GONE
             })
         } else {
-            // Abrir com animação
-            menuLateral.visibility = View.VISIBLE
-            overlay.visibility = View.VISIBLE
-            ObjectAnimator.ofFloat(menuLateral, "translationX", -menuLateral.width.toFloat(), 0f).apply {
-                duration = 300
-                start()
+            // Garantir que a View está posicionada corretamente antes de animar
+            menuLateral.post {
+                menuLateral.translationX = -menuLateral.width.toFloat()
+                menuLateral.visibility = View.VISIBLE
+                overlay.visibility = View.VISIBLE
+
+                // Abrir com animação
+                ObjectAnimator.ofFloat(menuLateral, "translationX", -menuLateral.width.toFloat(), 0f).apply {
+                    duration = 300
+                    start()
+                }
             }
         }
     }
