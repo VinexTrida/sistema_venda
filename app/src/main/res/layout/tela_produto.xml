@@ -136,7 +136,7 @@
         android:layout_height="match_parent"
         android:layout_margin="20dp"
         android:orientation="vertical"
-        android:background="@color/black"
+        android:background="@color/azul_claro"
         android:visibility="gone"
         android:clickable="true"
         tools:ignore="MissingConstraints"
@@ -162,7 +162,7 @@
             android:textColor="@color/white"
             android:gravity="center_vertical"
             android:text="Valor do produto:"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
         <EditText
             android:id="@+id/entradaValorProduto"
             android:layout_width="wrap_content"
@@ -174,22 +174,43 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="false"
+            android:textStyle="bold"
+            android:textSize="16sp"
             android:text="Estoque controlado:"
             android:onClick="funcao_limitar_estoque"/>
         <TextView
+            android:id="@+id/textoQuantidadeProduto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textColor="@color/white"
             android:gravity="center_vertical"
             android:text="Quantidade do produto:"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:alpha="0.5"/>
         <EditText
             android:id="@+id/entradaQuantidadeProduto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="100"/>
-
+            android:hint="100"
+            android:enabled="false"
+            android:alpha="0.5"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adicionar"
+            android:onClick="funcao_adicionar_produto"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:onClick="funcao_adicionar_produto"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

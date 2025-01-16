@@ -5,7 +5,10 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
+import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
@@ -83,7 +86,20 @@ class codigo_tela_produto : AppCompatActivity() {
     }
 
     fun funcao_limitar_estoque(view: View){
+        val checkBox = view as CheckBox
+        val textoQuantidadeProduto = findViewById<TextView>(R.id.textoQuantidadeProduto)
+        val inputQuantidadeProduto = findViewById<EditText>(R.id.entradaQuantidadeProduto)
 
+        if(checkBox.isChecked == true){
+            textoQuantidadeProduto.alpha = 1f
+            inputQuantidadeProduto.alpha = 1f
+            inputQuantidadeProduto.isEnabled = true
+        }else{
+            inputQuantidadeProduto.setText("")
+            textoQuantidadeProduto.alpha = 0.5f
+            inputQuantidadeProduto.alpha = 0.5f
+            inputQuantidadeProduto.isEnabled = false
+        }
     }
 
     fun funcao_voltar(view: View){
