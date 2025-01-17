@@ -155,7 +155,7 @@ class codigo_tela_venda : AppCompatActivity(){
             val botaoMais = Button(this).apply {
                 text = "+"
                 textSize = 26f
-                setTextColor(Color.GREEN)
+                setTextColor(Color.rgb(0, 150, 0))
                 setOnClickListener{
                     alterar_valor(novoItem.id, 1)
                 }

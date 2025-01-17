@@ -112,8 +112,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:text="Adicionar"
-            android:onClick="funcao_adicionar"
+            android:text="Adicionar Produto"
+            android:onClick="funcao_abrir_menu_adicionar_produto"
+            app:cornerRadius="0dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Adicionar Combo"
+            android:onClick="funcao_adicionar_combo"
             app:cornerRadius="0dp"
             android:textStyle="bold"
             android:textColor="@color/white"
@@ -132,15 +143,20 @@
     <!-- Menu adicionar -->
     <LinearLayout
         android:id="@+id/menuAdicionarProdutos"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="20dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/azul_claro"
+        android:background="@drawable/fundo_canto_arredondado"
         android:visibility="gone"
         android:clickable="true"
         tools:ignore="MissingConstraints"
-        android:gravity="center">
+        android:gravity="center"
+        android:padding="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -149,12 +165,13 @@
             android:textColor="@color/white"
             android:gravity="center_vertical"
             android:text="Nome do Produto:"
-            android:textSize="16sp" />
+            android:textSize="25sp"/>
         <EditText
             android:id="@+id/entradaNomeProduto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Abacaxi"/>
+            android:hint="EX: Refrigerante"
+            android:textSize="25sp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -162,21 +179,22 @@
             android:textColor="@color/white"
             android:gravity="center_vertical"
             android:text="Valor do produto:"
-            android:textSize="16sp"/>
+            android:textSize="25sp"/>
         <EditText
             android:id="@+id/entradaValorProduto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:hint="8,00"/>
+            android:hint="EX: 8,00"
+            android:textSize="25sp"/>
         <CheckBox
             android:id="@+id/checkboxEstoqueControlado"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="false"
             android:textStyle="bold"
-            android:textSize="16sp"
-            android:text="Estoque controlado:"
+            android:textSize="25sp"
+            android:text="Estoque controlado"
             android:onClick="funcao_limitar_estoque"/>
         <TextView
             android:id="@+id/textoQuantidadeProduto"
@@ -186,16 +204,17 @@
             android:textColor="@color/white"
             android:gravity="center_vertical"
             android:text="Quantidade do produto:"
-            android:textSize="16sp"
+            android:textSize="25sp"
             android:alpha="0.5"/>
         <EditText
             android:id="@+id/entradaQuantidadeProduto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="100"
+            android:hint="EX: 100"
             android:enabled="false"
-            android:alpha="0.5"/>
+            android:alpha="0.5"
+            android:textSize="25sp"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -203,14 +222,16 @@
             android:onClick="funcao_adicionar_produto"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:textSize="25sp"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancelar"
-            android:onClick="funcao_adicionar_produto"
+            android:onClick="funcao_fechar"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:textSize="25sp"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
