@@ -1,13 +1,16 @@
 package SqlLite
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class data_base(context: Context):SQLiteOpenHelper(context, DataBaseName, null, DataBaseVersion){
     companion object{
         const val DataBaseName = "BDLocal.db"
-        const val DataBaseVersion = 2
+        const val DataBaseVersion = 3
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -67,5 +70,51 @@ class data_base(context: Context):SQLiteOpenHelper(context, DataBaseName, null, 
         db?.execSQL("DROP TABLE IF EXISTS ralacao_combos")
         db?.execSQL("DROP TABLE IF EXISTS log")
         onCreate(db)
+    }
+
+//-------------------------------------------------------------------------------------------------------------------------------
+    suspend fun consulta_produtos(): List<Map<String, Any>> {
+        val resultados = mutableListOf<Map<String, Any>>()
+        withContext(Dispatchers.IO){
+            // Só é necessario o @data_base para evitar ambiguidade
+            // readableDatabase só permite fazer leitura no banco
+            val db = this@data_base.readableDatabase
+            val consulta = db.rawQuery("SELECT * FROM produtos", null)
+
+            if(consulta.moveToFirst()){
+                do{
+                    // Pega o id da coluna pelo nome, e usa esse id para consultar o dado dela
+                    val nome = consulta.getString(consulta.getColumnIndexOrThrow("nome"))
+                    val preco = consulta.getDouble(consulta.getColumnIndexOrThrow("preco"))
+                    val quantidade = consulta.getInt(consulta.getColumnIndexOrThrow("quantidade"))
+                    val inerente = consulta.getInt(consulta.getColumnIndexOrThrow("inerente"))
+                    val emUso = consulta.getInt(consulta.getColumnIndexOrThrow("emUso"))
+                    val posicao = consulta.getInt(consulta.getColumnIndexOrThrow("posicao"))
+                    val combo = consulta.getInt(consulta.getColumnIndexOrThrow("combo"))
+                    val caixas = consulta.getString(consulta.getColumnIndexOrThrow("caixas"))
+                }while(consulta.moveToNext())
+            }
+        }
+        return resultados
+    }
+
+    fun inserir_produto(nome: String, preco: Double, quantidade: Int, inerente: Int, emUso: Int, posicao: Int, combo: Int, caixas: String): Boolean {
+        val db = this.writableDatabase
+
+        val values = ContentValues().apply {
+            put("nome", nome)
+            put("preco", preco)
+            put("quantidade", quantidade)
+            put("inerente", inerente)
+            put("emUso", emUso)
+            put("posicao", posicao)
+            put("combo", combo)
+            put("caixas", caixas)
+        }
+
+        val resultado = db.insert("produtos", null, values)
+        db.close()
+        // Retorna true se a inserção foi bem-sucedida
+        return resultado != -1L
     }
 }

@@ -1,5 +1,6 @@
 package com.example.sistema_venda
 
+import SqlLite.data_base
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -11,6 +12,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
@@ -67,12 +69,44 @@ class codigo_tela_produto : AppCompatActivity() {
         })
     }
 
+//-------------------------------------------------------------------------------------------------------------------------------
+
     fun funcao_abrir_menu_adicionar_produto(view: View){
         val menuAdicionarProdutos = findViewById<View>(R.id.menuAdicionarProdutos)
         val menuLateral = findViewById<LinearLayout>(R.id.menuLateral)
 
         fechar_lateral(menuLateral)
         fade_in(menuAdicionarProdutos)
+    }
+
+    fun funcao_adicionar_produto(view: View){
+        val entradaNomeProduto = findViewById<EditText>(R.id.entradaNomeProduto)
+        val entradaValorProduto = findViewById<EditText>(R.id.entradaValorProduto)
+        val checkboxEstoqueControlado = findViewById<CheckBox>(R.id.checkboxEstoqueControlado)
+        val entradaQuantidadeProduto = findViewById<EditText>(R.id.entradaQuantidadeProduto)
+
+        val nome = entradaNomeProduto.text.toString()
+        val valor = entradaValorProduto.text.toString().toDoubleOrNull() ?: 0.0
+        var quantidade = 0
+        var inerente = 1
+        val emUso = 0
+        val posicao = 0
+        val combo = 0
+        val caixas = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,"
+
+        if(checkboxEstoqueControlado.isChecked){
+            quantidade = entradaQuantidadeProduto.toString().toInt()
+            inerente = 0
+        }
+
+        val db = data_base(view.context)
+        val sucesso = db.inserir_produto(nome, valor, quantidade, inerente, emUso, posicao, combo, caixas)
+
+        if (sucesso) {
+            Toast.makeText(view.context, "Produto inserido com sucesso!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(view.context, "Erro ao inserir produto!", Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun funcao_configuracoes(view: View){
@@ -127,7 +161,6 @@ class codigo_tela_produto : AppCompatActivity() {
     }
 
     fun zerar_menus() {
-
         val entradaNomeProduto = findViewById<EditText>(R.id.entradaNomeProduto)
         val entradaValorProduto = findViewById<EditText>(R.id.entradaValorProduto)
         val checkboxEstoqueControlado = findViewById<CheckBox>(R.id.checkboxEstoqueControlado)
