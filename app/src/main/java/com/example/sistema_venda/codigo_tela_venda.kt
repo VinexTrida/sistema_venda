@@ -105,7 +105,6 @@ class codigo_tela_venda : AppCompatActivity(){
                 textSize = 16f
                 setTextColor(Color.BLACK)
                 textAlignment = View.TEXT_ALIGNMENT_CENTER
-
             }
 
             val layoutInterno = LinearLayout(this).apply {

@@ -5,7 +5,10 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
@@ -18,7 +21,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class codigo_tela_produto : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +33,7 @@ class codigo_tela_produto : AppCompatActivity() {
         setContentView(R.layout.tela_produto)
         // Tira a bara no topo do app
         supportActionBar?.hide()
+        buscar_produtos()
     }
 
     fun fade_in(view: View){
@@ -70,6 +77,62 @@ class codigo_tela_produto : AppCompatActivity() {
     }
 
 //-------------------------------------------------------------------------------------------------------------------------------
+
+    fun buscar_produtos(){
+        val db = data_base(context = this)
+        val layoutItensVenda = findViewById<LinearLayout>(R.id.itensVenda)
+        val textoSemProduto = findViewById<TextView>(R.id.textoSemProduto)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            while(true) {
+                delay(1000)
+                val produtos = db.consulta_produtos()
+                if (produtos.isNotEmpty()) {
+                    layoutItensVenda.removeView(textoSemProduto)
+                    for (produto in produtos) {
+                        val novoItem = LinearLayout(layoutItensVenda.context).apply {
+                            background = GradientDrawable().apply {
+                                setColor(Color.LTGRAY) // Cor de fundo
+                                cornerRadius =
+                                    10 * resources.displayMetrics.density // Define o radius
+                            }
+                            orientation = LinearLayout.HORIZONTAL
+                            gravity = Gravity.CENTER_VERTICAL
+                            layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                (60 * resources.displayMetrics.density).toInt()
+                            ).apply {
+                                setMargins(
+                                    /* left = */ (0 * resources.displayMetrics.density).toInt(),
+                                    /* top = */ (0 * resources.displayMetrics.density).toInt(),
+                                    /* right = */ (0 * resources.displayMetrics.density).toInt(),
+                                    /* bottom = */ (5 * resources.displayMetrics.density).toInt()
+                                )
+                                setPadding(
+                                    /* left = */ (10 * resources.displayMetrics.density).toInt(),
+                                    /* top = */ (0 * resources.displayMetrics.density).toInt(),
+                                    /* right = */ (0 * resources.displayMetrics.density).toInt(),
+                                    /* bottom = */ (0 * resources.displayMetrics.density).toInt()
+                                )
+                            }
+                            id = View.generateViewId()
+                        }
+
+                        val nomeProduto = TextView(layoutItensVenda.context).apply {
+                            text = produto["nome"] as String
+                            textSize = 16f
+                            setTextColor(Color.BLACK)
+                            textAlignment = View.TEXT_ALIGNMENT_CENTER
+                        }
+
+                        novoItem.addView(nomeProduto)
+
+                        layoutItensVenda.addView(novoItem)
+                    }
+                }
+            }
+        }
+    }
 
     fun funcao_abrir_menu_adicionar_produto(view: View){
         val menuAdicionarProdutos = findViewById<View>(R.id.menuAdicionarProdutos)

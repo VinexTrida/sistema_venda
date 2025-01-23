@@ -92,6 +92,20 @@ class data_base(context: Context):SQLiteOpenHelper(context, DataBaseName, null, 
                     val posicao = consulta.getInt(consulta.getColumnIndexOrThrow("posicao"))
                     val combo = consulta.getInt(consulta.getColumnIndexOrThrow("combo"))
                     val caixas = consulta.getString(consulta.getColumnIndexOrThrow("caixas"))
+
+                    // Adiciona os dados a um mapa e insere na lista de resultados
+                    resultados.add(
+                        mapOf(
+                            "nome" to nome,
+                            "preco" to preco,
+                            "quantidade" to quantidade,
+                            "inerente" to inerente,
+                            "emUso" to emUso,
+                            "posicao" to posicao,
+                            "combo" to combo,
+                            "caixas" to caixas
+                        )
+                    )
                 }while(consulta.moveToNext())
             }
         }
