@@ -131,4 +131,13 @@ class data_base(context: Context):SQLiteOpenHelper(context, DataBaseName, null, 
         // Retorna true se a inserção foi bem-sucedida
         return resultado != -1L
     }
+
+    fun remover_produto(nome: String): Boolean {
+        val db = this.writableDatabase
+
+        val resultado = db.delete("produtos", "nome = ?", arrayOf(nome))
+        db.close()
+        // Retorna true se removeu pelo menos uma linha
+        return resultado > 0
+    }
 }

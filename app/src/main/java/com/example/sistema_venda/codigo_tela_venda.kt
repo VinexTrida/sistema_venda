@@ -81,7 +81,9 @@ class codigo_tela_venda : AppCompatActivity(){
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
                 layoutParams = LinearLayout.LayoutParams(
+                    // Medida X
                     LinearLayout.LayoutParams.MATCH_PARENT,
+                    // Medida Y
                     (60 * resources.displayMetrics.density).toInt()
                 ).apply {
                     setMargins(
@@ -110,7 +112,9 @@ class codigo_tela_venda : AppCompatActivity(){
             val layoutInterno = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(
+                    // Medida X
                     LinearLayout.LayoutParams.MATCH_PARENT,
+                    // Medida Y
                     LinearLayout.LayoutParams.MATCH_PARENT
                 )
                 gravity = Gravity.END
@@ -132,7 +136,9 @@ class codigo_tela_venda : AppCompatActivity(){
                 }
                 setBackgroundColor(Color.TRANSPARENT)
                 layoutParams = LinearLayout.LayoutParams(
+                    // Medida X
                     (50 * resources.displayMetrics.density).toInt(),
+                    // Medida Y
                     (50 * resources.displayMetrics.density).toInt()
                 ).apply {
                     setMargins(
@@ -160,7 +166,9 @@ class codigo_tela_venda : AppCompatActivity(){
                 }
                 setBackgroundColor(Color.TRANSPARENT)
                 layoutParams = LinearLayout.LayoutParams(
+                    // Medida X
                     (50 * resources.displayMetrics.density).toInt(),
+                    // Medida Y
                     (50 * resources.displayMetrics.density).toInt()
                 ).apply {
                     setMargins(

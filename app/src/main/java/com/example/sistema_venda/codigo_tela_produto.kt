@@ -1,26 +1,23 @@
 package com.example.sistema_venda
 
 import SqlLite.data_base
-import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.addListener
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -82,54 +79,132 @@ class codigo_tela_produto : AppCompatActivity() {
         val db = data_base(context = this)
         val layoutItensVenda = findViewById<LinearLayout>(R.id.itensVenda)
         val textoSemProduto = findViewById<TextView>(R.id.textoSemProduto)
+        val entradaNomeProdutoRemover = findViewById<ListView>(R.id.entradaNomeProdutoRemover)
+        val listaProdutos = mutableListOf<String>()
+        val listaId = mutableListOf<Int>()
 
         CoroutineScope(Dispatchers.Main).launch {
             while(true) {
-                delay(1000)
                 val produtos = db.consulta_produtos()
+
                 if (produtos.isNotEmpty()) {
                     layoutItensVenda.removeView(textoSemProduto)
                     for (produto in produtos) {
-                        val novoItem = LinearLayout(layoutItensVenda.context).apply {
-                            background = GradientDrawable().apply {
-                                setColor(Color.LTGRAY) // Cor de fundo
-                                cornerRadius =
-                                    10 * resources.displayMetrics.density // Define o radius
+                        val idProduto = produto["nome"] as String
+                        val hashId = idProduto.hashCode()
+
+                        if(!listaId.contains(hashId)) {
+                            // Lista com os nomes dos produtos disponiveis para serem removidos
+                            listaProdutos.add(produto["nome"] as String)
+                            val adapter = ArrayAdapter(layoutItensVenda.context, android.R.layout.simple_list_item_activated_1, listaProdutos)
+                            entradaNomeProdutoRemover.adapter = adapter
+                            entradaNomeProdutoRemover.choiceMode = ListView.CHOICE_MODE_SINGLE
+
+                            val novoItem = LinearLayout(layoutItensVenda.context).apply {
+                                background = GradientDrawable().apply {
+                                    setColor(Color.LTGRAY) // Cor de fundo
+                                    cornerRadius =
+                                        10 * resources.displayMetrics.density // Define o radius
+                                }
+                                orientation = LinearLayout.HORIZONTAL
+                                gravity = Gravity.CENTER_VERTICAL
+                                layoutParams = LinearLayout.LayoutParams(
+                                    // Medida X
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    // Medida Y
+                                    (60 * resources.displayMetrics.density).toInt()
+                                ).apply {
+                                    setMargins(
+                                        /* left = */
+                                        (0 * resources.displayMetrics.density).toInt(),
+                                        /* top = */
+                                        (0 * resources.displayMetrics.density).toInt(),
+                                        /* right = */
+                                        (0 * resources.displayMetrics.density).toInt(),
+                                        /* bottom = */
+                                        (5 * resources.displayMetrics.density).toInt()
+                                    )
+                                    setPadding(
+                                        /* left = */
+                                        (10 * resources.displayMetrics.density).toInt(),
+                                        /* top = */
+                                        (0 * resources.displayMetrics.density).toInt(),
+                                        /* right = */
+                                        (0 * resources.displayMetrics.density).toInt(),
+                                        /* bottom = */
+                                        (0 * resources.displayMetrics.density).toInt()
+                                    )
+                                }
+                                id = hashId
                             }
-                            orientation = LinearLayout.HORIZONTAL
-                            gravity = Gravity.CENTER_VERTICAL
-                            layoutParams = LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                (60 * resources.displayMetrics.density).toInt()
-                            ).apply {
-                                setMargins(
-                                    /* left = */ (0 * resources.displayMetrics.density).toInt(),
-                                    /* top = */ (0 * resources.displayMetrics.density).toInt(),
-                                    /* right = */ (0 * resources.displayMetrics.density).toInt(),
-                                    /* bottom = */ (5 * resources.displayMetrics.density).toInt()
-                                )
-                                setPadding(
-                                    /* left = */ (10 * resources.displayMetrics.density).toInt(),
-                                    /* top = */ (0 * resources.displayMetrics.density).toInt(),
-                                    /* right = */ (0 * resources.displayMetrics.density).toInt(),
-                                    /* bottom = */ (0 * resources.displayMetrics.density).toInt()
-                                )
+
+                            val nomeProduto = TextView(layoutItensVenda.context).apply {
+                                text = produto["nome"] as String
+                                textSize = 16f
+                                setTextColor(Color.BLACK)
+                                textAlignment = View.TEXT_ALIGNMENT_CENTER
                             }
-                            id = View.generateViewId()
+
+                            val precoProduto = TextView(layoutItensVenda.context).apply {
+                                text = " R$${String.format("%.2f", produto["preco"] as Double)}"
+                                textSize = 16f
+                                setTextColor(Color.BLACK)
+                                textAlignment = View.TEXT_ALIGNMENT_CENTER
+                            }
+
+                            val layoutInterno = LinearLayout(layoutItensVenda.context).apply {
+                                orientation = LinearLayout.HORIZONTAL
+                                layoutParams = LinearLayout.LayoutParams(
+                                    // Medida X
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    // Medida Y
+                                    LinearLayout.LayoutParams.MATCH_PARENT
+                                )
+                                gravity = Gravity.CENTER_VERTICAL or Gravity.END
+                            }
+
+                            val quantidadeEstoque = TextView(layoutItensVenda.context).apply {
+                                text = "0"
+                                textSize = 16f
+                                setTextColor(Color.BLACK)
+                                textAlignment = View.TEXT_ALIGNMENT_CENTER
+                            }
+
+                            val botaoEditar = Button(layoutItensVenda.context).apply {
+                                setBackgroundResource(R.drawable.lapis)
+                                setTextColor(Color.RED)
+                                setOnClickListener{
+                                    // falta a função
+                                }
+                                layoutParams = LinearLayout.LayoutParams(
+                                    // Medida X
+                                    (40 * resources.displayMetrics.density).toInt(),
+                                    // Medida Y
+                                    (40 * resources.displayMetrics.density).toInt()
+                                ).apply {
+                                    setMargins(
+                                        /* left = */ (20 * resources.displayMetrics.density).toInt(),
+                                        /* top = */ (0 * resources.displayMetrics.density).toInt(),
+                                        /* right = */ (10 * resources.displayMetrics.density).toInt(),
+                                        /* bottom = */ (0 * resources.displayMetrics.density).toInt()
+                                    )
+                                }
+                            }
+
+                            layoutInterno.addView(quantidadeEstoque)
+                            layoutInterno.addView(botaoEditar)
+
+                            novoItem.addView(nomeProduto)
+                            novoItem.addView(precoProduto)
+                            novoItem.addView(layoutInterno)
+
+                            layoutItensVenda.addView(novoItem)
                         }
-
-                        val nomeProduto = TextView(layoutItensVenda.context).apply {
-                            text = produto["nome"] as String
-                            textSize = 16f
-                            setTextColor(Color.BLACK)
-                            textAlignment = View.TEXT_ALIGNMENT_CENTER
-                        }
-
-                        novoItem.addView(nomeProduto)
-
-                        layoutItensVenda.addView(novoItem)
+                        listaId.add(hashId)
                     }
+
                 }
+                delay(1000)
             }
         }
     }
@@ -142,8 +217,16 @@ class codigo_tela_produto : AppCompatActivity() {
         fade_in(menuAdicionarProdutos)
     }
 
+    fun funcao_abrir_menu_remover_produto(view: View){
+        val menuRemoverProdutos = findViewById<View>(R.id.menuRemoverProdutos)
+        val menuLateral = findViewById<LinearLayout>(R.id.menuLateral)
+
+        fechar_lateral(menuLateral)
+        fade_in(menuRemoverProdutos)
+    }
+
     fun funcao_adicionar_produto(view: View){
-        val entradaNomeProduto = findViewById<EditText>(R.id.entradaNomeProduto)
+        val entradaNomeProduto = findViewById<EditText>(R.id.entradaNomeProdutoAdicionar)
         val entradaValorProduto = findViewById<EditText>(R.id.entradaValorProduto)
         val checkboxEstoqueControlado = findViewById<CheckBox>(R.id.checkboxEstoqueControlado)
         val entradaQuantidadeProduto = findViewById<EditText>(R.id.entradaQuantidadeProduto)
@@ -187,18 +270,20 @@ class codigo_tela_produto : AppCompatActivity() {
     fun funcao_fechar(view: View){
         val menuLateral = findViewById<LinearLayout>(R.id.menuLateral)
         val menuAdicionarProdutos = findViewById<View>(R.id.menuAdicionarProdutos)
+        val menuRemoverProdutos = findViewById<View>(R.id.menuRemoverProdutos)
         val overlay = findViewById<View>(R.id.overlay)
 
         if (menuLateral.visibility == View.VISIBLE) {
-            // Fechar com animação
             fechar_lateral(menuLateral)
         }
-
         if (menuAdicionarProdutos.visibility == View.VISIBLE) {
             fade_out(menuAdicionarProdutos)
         }
-        fade_out(overlay)
+        if (menuRemoverProdutos.visibility == View.VISIBLE) {
+            fade_out(menuRemoverProdutos)
+        }
 
+        fade_out(overlay)
         zerar_menus()
     }
 
@@ -219,19 +304,35 @@ class codigo_tela_produto : AppCompatActivity() {
         }
     }
 
+    fun funcao_remover_produto(view: View){
+        val entradaNomeProdutoRemover = findViewById<ListView>(R.id.entradaNomeProdutoRemover)
+
+        val db = data_base(view.context)
+        val sucesso = db.remover_produto(entradaNomeProdutoRemover.)
+
+        if (sucesso) {
+            Toast.makeText(view.context, "Produto removido com sucesso!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(view.context, "Erro ao remover produto!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun funcao_voltar(view: View){
         finish()
     }
 
     fun zerar_menus() {
-        val entradaNomeProduto = findViewById<EditText>(R.id.entradaNomeProduto)
+        val entradaNomeProdutoAdicionar = findViewById<EditText>(R.id.entradaNomeProdutoAdicionar)
         val entradaValorProduto = findViewById<EditText>(R.id.entradaValorProduto)
         val checkboxEstoqueControlado = findViewById<CheckBox>(R.id.checkboxEstoqueControlado)
         val entradaQuantidadeProduto = findViewById<EditText>(R.id.entradaQuantidadeProduto)
 
-        entradaNomeProduto.setText("")
+        entradaNomeProdutoAdicionar.setText("")
         entradaQuantidadeProduto.setText("")
         entradaValorProduto.setText("")
         checkboxEstoqueControlado.isChecked = false
+
+        val entradaNomeProdutoRemover = findViewById<ListView>(R.id.entradaNomeProdutoRemover)
+        entradaNomeProdutoRemover.setSelection(0)
     }
 }
