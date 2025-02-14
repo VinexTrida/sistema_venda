@@ -1,8 +1,11 @@
 package SqlLite
 
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class data_base(context: Context):SQLiteOpenHelper(context, DataBaseName, null, DataBaseVersion){
     companion object{
@@ -67,5 +70,37 @@ class data_base(context: Context):SQLiteOpenHelper(context, DataBaseName, null, 
         db?.execSQL("DROP TABLE IF EXISTS ralacao_combos")
         db?.execSQL("DROP TABLE IF EXISTS log")
         onCreate(db)
+    }
+
+    suspend fun busca_BD(caixa: Int): List<Triple<String, Double, Int>> {
+        return withContext(Dispatchers.IO) {
+            val db = this@data_base.readableDatabase
+            val listaProdutos = mutableListOf<Triple<String, Double, Int>>()
+            var retornoBD: Cursor? = null
+
+            try {
+                retornoBD = db.rawQuery("""
+                    SELECT nome, preco, quantidade FROM produtos 
+                    WHERE emUso = 1 AND (quantidade > 0 OR inerente = 1) 
+                    AND (caixas LIKE '${caixa},%' OR caixas LIKE '%,${caixa},%') 
+                    ORDER BY posicao
+                """, null)
+
+                if (retornoBD.moveToFirst()) {
+                    do {
+                        val nome = retornoBD.getString(retornoBD.getColumnIndexOrThrow("nome"))
+                        val preco = retornoBD.getDouble(retornoBD.getColumnIndexOrThrow("preco"))
+                        val quantidade = retornoBD.getInt(retornoBD.getColumnIndexOrThrow("quantidade"))
+                        listaProdutos.add(Triple(nome, preco, quantidade))
+                    } while (retornoBD.moveToNext())
+                }
+            } catch (e: Exception) {
+                println("O erro foi ${e.message}")
+            } finally {
+                retornoBD?.close()
+            }
+
+            return@withContext listaProdutos
+        }
     }
 }
