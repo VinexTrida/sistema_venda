@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
@@ -308,13 +309,19 @@ class codigo_tela_produto : AppCompatActivity() {
         val entradaNomeProdutoRemover = findViewById<ListView>(R.id.entradaNomeProdutoRemover)
 
         val db = data_base(view.context)
-        val sucesso = db.remover_produto(entradaNomeProdutoRemover.)
+        //val sucesso = db.remover_produto(entradaNomeProdutoRemover.selectedItem as String)
 
-        if (sucesso) {
-            Toast.makeText(view.context, "Produto removido com sucesso!", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(view.context, "Erro ao remover produto!", Toast.LENGTH_SHORT).show()
+        if (entradaNomeProdutoRemover.adapter == null || entradaNomeProdutoRemover.adapter.count == 0) {
+            Log.e("DEBUG", "O ListView está vazio ou sem adaptador!")
+            Toast.makeText(this, "Nenhum produto carregado!", Toast.LENGTH_SHORT).show()
+
         }
+
+//        if (sucesso) {
+//            Toast.makeText(view.context, "Produto removido com sucesso!", Toast.LENGTH_SHORT).show()
+//        } else {
+//            Toast.makeText(view.context, "Erro ao remover produto!", Toast.LENGTH_SHORT).show()
+//        }
     }
 
     fun funcao_voltar(view: View){
